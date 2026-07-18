@@ -2,10 +2,9 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database import engine, Base
+from routes import tracking, admin, ws
 
-# 1. Create database tables automatically FIRST before hitting any routes
-Base.metadata.create_all(bind=engine)
-
+# 1. Initialize the FastAPI app instance first so it's ready in memory
 app = FastAPI(title="Hotel Price Tracker AI")
 
 # 2. Setup Middleware
@@ -17,14 +16,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 3. Import routes HERE to break circular dependency chains
-from routes import tracking, admin, ws
+# 3. Use FastAPI lifespan events to create tables *on startup* instead of global scope
+@app.on_event("startup")
+def on_startup():
+    Base.metadata.create_all(bind=engine)
 
-# 4. Connect all the routes
+# 4. Connect your routers
 app.include_router(tracking.router)
 app.include_router(admin.router)
 app.include_router(ws.router)
 
 @app.get("/")
 def root():
-    return {"status": "healthy", "message":
+    return {"status": "healthy", "message": "Hotel Tracker API is running!"}
