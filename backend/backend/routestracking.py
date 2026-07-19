@@ -8,7 +8,8 @@ router = APIRouter(prefix="/track", tags=["Tracking"])
 
 @router.post("/")
 def create_tracking(data: TrackingCreate, db: Session = Depends(get_db)):
-    tracking = HotelTracking(**data.dict())
+    # .dict() is deprecated in newer Pydantic versions; use .model_dump() if you hit an error here later
+    tracking = HotelTracking(**data.dict()) 
     db.add(tracking)
     db.commit()
     db.refresh(tracking)
