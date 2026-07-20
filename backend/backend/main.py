@@ -3,10 +3,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database import engine, Base
 
-# Import the individual routers from your single routers.py file
+# Clean fix: Import from your single routers file instead of 'routes'
 from routers import tracking_router, admin_router, ws_router
 
-# Create database tables safely on startup
+# Create tables safely on startup
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
@@ -23,7 +23,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Register the routers to the main app instance
+# Register the routers from your single file
 app.include_router(tracking_router)
 app.include_router(admin_router)
 app.include_router(ws_router)
