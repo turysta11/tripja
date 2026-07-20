@@ -3,8 +3,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database import engine, Base
 
-# Clean fix: Import from your single routers file instead of 'routes'
-from .routers import tracking_router, admin_router, ws_router
+# Absolute import telling Python to look inside the backend folder package
+from backend.routers import tracking_router, admin_router, ws_router
 
 # Create tables safely on startup
 Base.metadata.create_all(bind=engine)
