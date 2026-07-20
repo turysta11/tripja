@@ -2,13 +2,13 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database import engine, Base
-# 1. Import your routes folder endpoints
-from routes import tracking, admin, ws 
 
-# Create tables safely on startup
+# Import the individual routers from your single routers.py file
+from routers import tracking_router, admin_router, ws_router
+
+# Create database tables safely on startup
 Base.metadata.create_all(bind=engine)
 
-# 2. Explicitly force the documentation paths
 app = FastAPI(
     title="Hotel Price Tracker AI",
     docs_url="/docs",
@@ -23,10 +23,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 3. Register your active endpoints to the server
-app.include_router(tracking.router)
-app.include_router(admin.router)
-app.include_router(ws.router)
+# Register the routers to the main app instance
+app.include_router(tracking_router)
+app.include_router(admin_router)
+app.include_router(ws_router)
 
 @app.get("/")
 def root():
